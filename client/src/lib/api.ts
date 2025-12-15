@@ -1,21 +1,6 @@
-
 import type { Pillar, ContactData, SystemStatus, Insight } from '../types';
 
 export type { ContactData, SystemStatus, Insight };
-
-// --- CONFIGURATION ---
-// CHANGED: We now use an empty string (Relative Path).
-// The vite.config.ts proxy handles the connection to localhost:5000 automatically.
-// This means your app will work on localhost, ngrok, or production without changing code.
-const API_BASE_URL = ''; 
-
-// Common headers
-const API_HEADERS = {
-  'Content-Type': 'application/json',
-  // This header helps bypass ngrok warnings if accessing backend directly, 
-  // though mostly handled by proxy now.
-  'ngrok-skip-browser-warning': 'true',
-};
 
 // --- CACHE LAYER ---
 let cache: {
@@ -28,7 +13,7 @@ let cache: {
   insights: null
 };
 
-// Fallback data
+// Fallback data ensures the frontend works even if the backend isn't running
 export const FALLBACK_PILLARS: Pillar[] = [
   {
     title: "Cybersecurity Services",
@@ -38,7 +23,7 @@ export const FALLBACK_PILLARS: Pillar[] = [
     iconName: "ShieldAlert",
     services: [
       "SOC-as-a-service", "EDR-as-a-service", "MDR-as-a-service", "XDR-as-a-service", 
-      "MFA-as-a-service", "MDM-as-a-service", "Vulnerability Assessment", "Dark Web Monitoring",
+      "MFA-as-a-service", "MDM-as-a-service", "Vulnerability Assessment", "Dark web monitoring",
       "Patch Management", "Expertise-as-a-service", "Email Security-as-a-service", "SASE-as-a-service",
       "Managed Next Gen Firewalls", "Penetration Testing-as-a-service", "Phishing Campaign & Training",
       "Digital Forensics", "DLP-as-a-service", "Managed Security Service Provider", "Security Incident Support", "Strategy & GRC"
@@ -77,7 +62,7 @@ export const FALLBACK_PILLARS: Pillar[] = [
         name: "XDR-as-a-service",
         description: "Comprehensive solution integrating data from endpoints, networks, email, and cloud into a single, unified view.",
         fullDescription: [
-          "XDR-as-a-Service (Extended Detection and Response) is a comprehensive, outsourced security solution that integrates data from all security layers—endpoints, networks, email, and cloud workloads—into a single, unified global cloud service.",
+          "XDR-as-a-Service (Extended Detection and Response) is a comprehensive, outsourced security solution that integrates data from all security layers—endpoints, networks, email, and cloud workloads—into a single, unified view.",
           "By correlating data across these traditionally silenced areas, the provider can detect sophisticated, multi-vector attacks that isolated tools might miss, enabling faster, automated responses across your entire digital environment."
         ],
         features: ["Multi-layer Data Integration", "Unified Security View", "Cross-vector Correlation", "Automated Response", "Sophisticated Attack Detection"],
@@ -260,9 +245,9 @@ export const FALLBACK_PILLARS: Pillar[] = [
           "We provide advisory support at any stage of your cloud adoption journey to help you capitalize on cloud potential."
         ],
         features: [
-          "Cloud readiness assessment (IT environment, business processes, data assets)",
-          "Cloud strategy development (roadmap & business case)",
-          "Advisory on optimal cloud vendor & deployment model (IaaS, PaaS, SaaS)",
+          "Cloud readiness assessment",
+          "Cloud strategy development",
+          "Advisory on optimal cloud vendor",
           "Developing practices for securing and governing cloud environment",
           "Risk mitigation strategy definition",
           "Disaster recovery and business continuity planning"
@@ -337,7 +322,7 @@ export const FALLBACK_PILLARS: Pillar[] = [
     description: "Build and deploy quality AI agent systems. Securely connect your data with any AI model to create accurate, domain-specific applications.",
     color: "from-crimson/20 to-rose-500/5",
     iconName: "Server",
-    services: ["AI Consulting", "AI Development", "Agent System"],
+    services: ["AI Consulting", "AI Development", "Agent Systems"],
     details: [
       {
         name: "AI Consulting",
@@ -353,6 +338,9 @@ export const FALLBACK_PILLARS: Pillar[] = [
           "Development process review",
           "ROI analysis",
           "Solution architecture design",
+          "Tech stack selection",
+          "Project budgeting",
+          "MVP conceptualization",
           "Risk management strategy creation",
           "User training and support"
         ],
@@ -368,15 +356,19 @@ export const FALLBACK_PILLARS: Pillar[] = [
           "ETL/ELT pipeline setup",
           "Data pre-processing (cleansing, annotation, transformation)",
           "Data protection and cybersecurity elaboration",
-          "AI algorithm selection and model training",
+          "AI algorithm selection",
+          "AI model training",
+          "Development process review",
           "Software integrations and APIs creation",
           "UX/UI and data visualization setup",
-          "End-to-end testing and deployment"
+          "Deployment to the production environment",
+          "End-to-end testing",
+          "Post-launch support, updates and modernization"
         ],
         benefits: ["Custom AI solutions", "Secure data handling", "Seamless integration"]
       },
       {
-        name: "Agent System",
+        name: "Agent Systems",
         description: "Building and deploying autonomous agents on your data with custom evaluation and governance.",
         fullDescription: [
           "We build and deploy autonomous agent systems that leverage your proprietary data to perform complex tasks."
@@ -387,84 +379,144 @@ export const FALLBACK_PILLARS: Pillar[] = [
           "Governance",
           "Deploy Agents"
         ],
-        benefits: ["Autonomous operations", "Data-driven decision making", "Governed AI execution"],
-        diagramUrl: "https://placehold.co/800x500/0f172a/d90429.png?text=Agent+Systems+Architecture&font=montserrat"
+        benefits: ["Autonomous operations", "Data-driven decision making", "Governed AI execution"]
       }
+    ]
+  }
+];
+
+export const FALLBACK_INSIGHTS: Insight[] = [
+  {
+    id: "ai-driven-ransomware",
+    title: "The Rise of AI-Driven Ransomware",
+    category: "Threat Report",
+    date: "Oct 12, 2024",
+    excerpt: "Analysis of the new wave of polymorphic malware leveraging LLMs to bypass static signatures.",
+    link: "/insights/ai-driven-ransomware",
+    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1600",
+    content: [
+      "In the last quarter of 2024, our Threat Intelligence Unit observed a 300% increase in polymorphic ransomware strains that appear to be generated by Large Language Models (LLMs). These attacks differ significantly from traditional ransomware in that they rewrite their own code structure with every iteration, effectively rendering signature-based detection useless.",
+      "The sophistication of these AI-driven agents allows them to conduct autonomous reconnaissance within a network for days before deploying payloads. They identify backup servers, exfiltrate sensitive data, and disable security controls using valid administrative credentials harvested through sophisticated phishing campaigns.",
+      "Our analysis indicates that these tools are becoming widely available on dark web forums as RaaS (Ransomware-as-a-Service) kits, lowering the barrier to entry for less skilled cybercriminals. The democratization of AI-offensive tools represents a paradigm shift in the threat landscape.",
+      "To combat this, Phezulu Cyber recommends a shift to behavioral-based Endpoint Detection and Response (EDR) and the implementation of Zero Trust Architecture. Static defenses are no longer sufficient; organizations must assume breach and focus on rapid containment and resilience."
+    ]
+  },
+  {
+    id: "zero-trust-beyond-buzzword",
+    title: "Zero Trust: Beyond the Buzzword",
+    category: "Webinar",
+    date: "Oct 28, 2024",
+    excerpt: "Practical implementation strategies for mid-sized enterprises moving away from perimeter-based security.",
+    link: "/insights/zero-trust-beyond-buzzword",
+    image: "https://images.unsplash.com/photo-1558494949-ef526b0042a0?auto=format&fit=crop&q=80&w=1600",
+    content: [
+      "Zero Trust is often sold as a product, but it is fundamentally a strategy. In this webinar summary, we break down the core tenets: verify explicitly, use least privilege access, and assume breach.",
+      "Many mid-sized enterprises struggle with the implementation phase. They purchase 'Zero Trust' labeled firewalls but fail to segment their networks or implement robust identity governance. The result is a false sense of security without the actual benefits of the architecture.",
+      "We discuss the 'Identity as the New Perimeter' concept. In a distributed workforce environment, the corporate network boundary has dissolved. Security must follow the user and the device, regardless of location.",
+      "Key takeaways include a 5-step roadmap for migration: 1) Identify protect surface, 2) Map transaction flows, 3) Architect the network, 4) Create Zero Trust policy, and 5) Monitor and maintain. This iterative approach prevents operational disruption while steadily increasing security posture."
+    ]
+  },
+  {
+    id: "compliance-cloud-era",
+    title: "Compliance in the Cloud Era",
+    category: "Blog",
+    date: "Nov 02, 2024",
+    excerpt: "Navigating GDPR and POPIA while maintaining agility in multi-cloud environments.",
+    link: "/insights/compliance-cloud-era",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1600",
+    content: [
+      "As organizations aggressively adopt multi-cloud strategies, the complexity of regulatory compliance explodes. Data sovereignty—knowing exactly where your customer data physically resides—becomes a moving target when leveraging serverless architectures and global CDNs.",
+      "The intersection of GDPR (Europe), POPIA (South Africa), and CCPA (California) creates a regulatory minefield. A single misconfigured S3 bucket can lead to fines that jeopardize the financial stability of a company, not to mention the reputational damage.",
+      "We explore the concept of 'Compliance-as-Code'. By embedding regulatory controls directly into your CI/CD pipelines and infrastructure provisioning scripts (Terraform/Ansible), you can ensure that no non-compliant resource is ever deployed to production.",
+      "Automated governance is the only scalable solution. Manual audits are snapshots in time; continuous compliance monitoring provides a video feed of your regulatory posture, allowing for real-time remediation of drift."
+    ]
+  },
+  {
+    id: "quantum-decryption-horizon",
+    title: "Quantum Decryption: The Horizon Threat",
+    category: "Threat Report",
+    date: "Dec 05, 2024",
+    excerpt: "Preparing your cryptographic infrastructure for the post-quantum era.",
+    link: "/insights/quantum-decryption-horizon",
+    image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=1600",
+    content: [
+      "Harvest Now, Decrypt Later (HNDL) attacks are intensifying. State-sponsored actors are intercepting encrypted traffic today with the intent of decrypting it once quantum computers reach sufficient qubit stability. This poses a severe long-term risk for organizations handling trade secrets, health records, and national security data.",
+      "The migration to Post-Quantum Cryptography (PQC) is not a simple patch; it is a multi-year infrastructure overhaul. NIST's recent standardization of CRYSTALS-Kyber represents a starting gun for this transition.",
+      "Phezulu Cyber advises clients to begin with a cryptographic inventory: audit where encryption is used, what algorithms are in place, and determine the data's longevity value. If your data must remain secret for 10+ years, it is already at risk."
+    ]
+  },
+  {
+    id: "incident-response-war-games",
+    title: "Live Fire: Incident Response War Games",
+    category: "Webinar",
+    date: "Nov 15, 2024",
+    excerpt: "Watch our Red Team simulate a supply chain attack and how the Blue Team defends.",
+    link: "/insights/incident-response-war-games",
+    image: "https://images.unsplash.com/photo-1614064641938-3bcee529cfae?auto=format&fit=crop&q=80&w=1600",
+    content: [
+      "Theory fails when the alert siren rings. In this recorded session, we conducted a live simulation of a software supply chain compromise—similar to SolarWinds—targeting a dummy financial services firm.",
+      "Witness the speed at which lateral movement occurs. Within 14 minutes of the initial foothold, the Red Team had escalated privileges. This highlights the critical importance of mean-time-to-detect (MTTD).",
+      "We analyze the Blue Team's response: where they succeeded in isolation, and where log fatigue caused missed signals. This webinar is essential viewing for SOC managers looking to refine their playbooks."
+    ]
+  },
+  {
+    id: "ciso-burnout-crisis",
+    title: "The CISO Burnout Crisis",
+    category: "Blog",
+    date: "Nov 20, 2024",
+    excerpt: "Why security leadership tenure is dropping and how to build sustainable operations.",
+    link: "/insights/ciso-burnout-crisis",
+    image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=1600",
+    content: [
+      "The average tenure of a CISO is now just 26 months. The relentless pressure of 24/7 liability, combined with under-resourced teams, is creating a leadership vacuum in the industry.",
+      "This post discusses the psychological toll of 'always-on' alert fatigue. We argue that cognitive offloading—outsourcing Tier 1 and Tier 2 monitoring to MDR providers—is not just an operational decision, but a human preservation strategy.",
+      "Effective security requires clarity of thought. When leadership is in a chronic state of fight-or-flight, strategic planning suffers. We provide a framework for CISOs to negotiate better mental health boundaries with their boards, framing it as a risk management necessity."
     ]
   }
 ];
 
 export const fetchPillars = async (): Promise<Pillar[]> => {
   if (cache.pillars) return cache.pillars;
-
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-    // Using relative path '/api/pillars' which Vite proxies to localhost:5000
-    const response = await fetch(`${API_BASE_URL}/api/pillars`, {
-      headers: API_HEADERS,
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
-
+    const response = await fetch('http://localhost:5000/api/pillars');
     if (!response.ok) throw new Error('Network response was not ok');
-    
     const data = await response.json();
     cache.pillars = data;
     return data;
   } catch (error) {
-    console.warn("Backend unreachable or slow. Using fallback data instantly.");
+    console.warn("Backend unreachable (running in preview mode). Using fallback data.", error);
     cache.pillars = FALLBACK_PILLARS;
     return FALLBACK_PILLARS;
   }
 };
 
-export const submitContact = async (data: ContactData): Promise<boolean> => {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
-
-    const response = await fetch(`${API_BASE_URL}/api/contact`, {
-      method: 'POST',
-      headers: API_HEADERS,
-      body: JSON.stringify(data),
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
-    
-    if (!response.ok) throw new Error('Submission failed');
-    return true;
-  } catch (error) {
-    console.warn("Backend unreachable. Simulating successful submission.");
-    return new Promise((resolve) => setTimeout(() => resolve(true), 800));
-  }
-};
-
 export const fetchSystemStatus = async (): Promise<SystemStatus> => {
   if (cache.status) return cache.status;
-
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1500);
-
-    const response = await fetch(`${API_BASE_URL}/api/status`, {
-      headers: API_HEADERS,
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
-
+    const response = await fetch('http://localhost:5000/api/status');
     if (!response.ok) throw new Error('Status check failed');
     const data = await response.json();
     cache.status = data;
     return data;
   } catch (error) {
-    const fallback = { label: "System Secure", color: "green", code: "SECURE" };
-    cache.status = fallback;
-    return fallback;
+     const fallback: SystemStatus = { label: "System Secure", color: "green", code: "SECURE" };
+     cache.status = fallback;
+     return fallback;
+  }
+};
+
+export const submitContact = async (data: ContactData): Promise<boolean> => {
+  try {
+    const response = await fetch('http://localhost:5000/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Submission failed');
+    return true;
+  } catch (error) {
+    console.warn("Backend unreachable. Simulating successful submission.", error);
+    return new Promise((resolve) => setTimeout(() => resolve(true), 1500));
   }
 };
 
@@ -473,44 +525,43 @@ export const fetchInsights = async (): Promise<Insight[]> => {
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const timeoutId = setTimeout(() => controller.abort(), 1500);
 
-    const response = await fetch(`${API_BASE_URL}/api/insights`, {
-      headers: API_HEADERS,
+    const response = await fetch('http://localhost:5000/api/insights', {
       signal: controller.signal
     });
 
     clearTimeout(timeoutId);
 
     if (!response.ok) throw new Error('Failed to fetch insights');
-    const data = await response.json();
+    const rawData = await response.json();
+    
+    // Ensure data has ID - Client-side sanitization
+    // If backend returns data without IDs (legacy data), generate one from the title
+    const data = rawData.map((item: any) => {
+        // Find fallback counterpart to fill in missing details if needed
+        const fallback = FALLBACK_INSIGHTS.find(f => f.id === item.id || f.title === item.title);
+        
+        return {
+            ...item,
+            id: item.id || item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+            // If backend is missing content/image, try to use fallback
+            content: item.content || fallback?.content,
+            image: item.image || fallback?.image,
+            link: item.link || fallback?.link || `/insights/${item.id}`
+        };
+    });
+
     cache.insights = data;
     return data;
   } catch (error) {
-    const fallback = [
-      {
-        title: "The Rise of AI-Driven Ransomware",
-        category: "Threat Report",
-        date: "Oct 12, 2024",
-        excerpt: "Analysis of the new wave of polymorphic malware leveraging LLMs.",
-        link: "#"
-      },
-      {
-        title: "Zero Trust: Beyond the Buzzword",
-        category: "Webinar",
-        date: "Oct 28, 2024",
-        excerpt: "Practical implementation strategies for mid-sized enterprises.",
-        link: "#"
-      },
-      {
-        title: "Compliance in the Cloud Era",
-        category: "Blog",
-        date: "Nov 02, 2024",
-        excerpt: "Navigating GDPR and POPIA while maintaining agility.",
-        link: "#"
-      }
-    ];
-    cache.insights = fallback;
-    return fallback;
+    cache.insights = FALLBACK_INSIGHTS;
+    return FALLBACK_INSIGHTS;
   }
+};
+
+export const fetchInsightById = async (id: string): Promise<Insight | undefined> => {
+  // First check if we have them cached
+  const insights = await fetchInsights();
+  return insights.find(insight => insight.id === id);
 };

@@ -47,7 +47,8 @@ mongoose.connect(MONGO_URI)
 // --- SERVE FRONTEND (Production/Preview) ---
 // This allows the server to host the React app on the same port (5000)
 // Resolves ngrok CORS/Multi-port instability.
-if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'preview' || true) {
+// NOTE: removed unconditional `|| true` so static serving only happens in real production/preview.
+if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'preview') {
   // Point to the client dist folder (assuming it's a sibling folder)
   const clientBuildPath = path.join(__dirname, '../client/dist');
   

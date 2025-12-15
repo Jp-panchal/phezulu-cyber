@@ -1,3 +1,4 @@
+
 import type { LucideIcon } from 'lucide-react';
 
 export interface NavItem {
@@ -26,7 +27,6 @@ export interface ServiceDetail {
   fullDescription?: string[]; // Array of paragraphs for the main content
   features?: string[]; // List of key capabilities
   benefits?: string[]; // List of business benefits
-  diagramUrl?: string; // Optional URL for diagram/animation
 }
 
 export interface Pillar {
@@ -57,9 +57,12 @@ export interface SystemStatus {
 }
 
 export interface Insight {
+  id: string;
   title: string;
   category: string;
   date: string;
   excerpt: string;
+  content?: string[]; // Array of paragraphs for the full article
+  image?: string; // Optional header image
   link: string;
 }

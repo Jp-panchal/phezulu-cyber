@@ -3,10 +3,13 @@ import { motion, useMotionValue, useTransform } from 'framer-motion';
 import Button from './ui/Button';
 import { ArrowRight, MessageSquare } from 'lucide-react';
 import { fetchSystemStatus, type SystemStatus } from '../lib/api';
+import { useContact } from '../lib/ContactContext';
+
 
 const Hero: React.FC = () => {
   const [status, setStatus] = useState<SystemStatus | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { openContact } = useContact();
 
   // Mouse Parallax Logic
   const mouseX = useMotionValue(0);
@@ -73,8 +76,12 @@ const Hero: React.FC = () => {
             <Button variant="primary" icon={<ArrowRight size={18} />} aria-label="Explore Solutions">
               Explore Solutions
             </Button>
-            <Button variant="outline" icon={<MessageSquare size={18} />} aria-label="Talk to an Architect">
-              Talk to an Architect
+            <Button 
+                variant="outline" 
+                icon={<MessageSquare size={18} />} 
+                aria-label="Talk to an Architect"
+                onClick={openContact}
+            >  Talk to an Architect
             </Button>
           </div>
         </motion.div>

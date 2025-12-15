@@ -1,8 +1,10 @@
 import React from 'react';
 import { Linkedin, Twitter, Github } from 'lucide-react';
 import Button from './ui/Button';
+import { useContact } from '../lib/ContactContext';
 
 const Footer: React.FC = () => {
+  const { openContact } = useContact();
   return (
     <footer id="footer" className="relative pt-20 bg-midnight border-t border-slate-800">
       
@@ -18,8 +20,10 @@ const Footer: React.FC = () => {
             </p>
           </div>
           <div className="shrink-0">
-             <Button className="bg-white text-rose-900 hover:bg-rose-50 hover:text-rose-950 shadow-none">
-              Start Your Audit
+             <Button 
+                onClick={openContact}
+                className="bg-white text-rose-900 hover:bg-rose-50 hover:text-rose-950 shadow-none"
+             > Start Your Audit
              </Button>
           </div>
         </div>

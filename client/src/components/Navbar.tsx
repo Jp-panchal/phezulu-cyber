@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ChevronRight, ChevronDown, Sun, Moon } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../lib/ThemeContext';
 import { useServiceContext } from '../lib/ServiceContext';
+import { useContact } from '../lib/ContactContext';
 import { FALLBACK_PILLARS } from '../lib/api';
 
 const Navbar: React.FC = () => {
@@ -11,8 +13,13 @@ const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>('');
+  
   const { theme, toggleTheme } = useTheme();
   const { openServiceModal } = useServiceContext();
+  const { openContact } = useContact();
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,6 +31,9 @@ const Navbar: React.FC = () => {
 
   // Intersection Observer for Active Section
   useEffect(() => {
+    // Only observe on main page
+    if (location.pathname !== '/') return;
+
     const sections = document.querySelectorAll('section[id]');
     
     const observer = new IntersectionObserver((entries) => {
@@ -33,7 +43,7 @@ const Navbar: React.FC = () => {
         }
       });
     }, {
-      rootMargin: '-20% 0px -50% 0px' // Trigger when section is near middle of viewport
+      rootMargin: '-20% 0px -50% 0px' 
     });
 
     sections.forEach((section) => observer.observe(section));
@@ -41,17 +51,18 @@ const Navbar: React.FC = () => {
     return () => {
       sections.forEach((section) => observer.unobserve(section));
     };
-  }, []);
+  }, [location.pathname]);
 
   interface NavItemConfig {
     name: string;
     href: string;
-    type: 'link' | 'dropdown' | 'mega';
+    type: 'link' | 'dropdown' | 'mega' | 'page';
+    viewTarget?: string; 
     dropdownItems?: { name: string; href: string }[];
   }
 
   const navItems: NavItemConfig[] = [
-    { name: 'Why Phezulu', href: '#why-phezulu', type: 'link' },
+    { name: 'Why Phezulu', href: '/why-phezulu', type: 'page' },
     { 
       name: 'Services', 
       href: '#services', 
@@ -60,12 +71,13 @@ const Navbar: React.FC = () => {
     { name: 'Partners', href: '#trust', type: 'link' }, 
     { 
       name: 'Insights', 
-      href: '#insights', 
+      href: '/insights', 
       type: 'dropdown',
       dropdownItems: [
-        { name: 'Blog', href: '#insights' },
-        { name: 'Webinars', href: '#insights' },
-        { name: 'Reports', href: '#insights' },
+        { name: 'All Insights', href: '/insights' },
+        { name: 'Blog', href: '/blog' },
+        { name: 'Webinars', href: '/webinars' },
+        { name: 'Reports', href: '/reports' },
       ]
     },
   ];
@@ -80,35 +92,60 @@ const Navbar: React.FC = () => {
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    const targetId = href.replace('#', '');
-    const element = document.getElementById(targetId);
-    if (element) {
-      const offset = 80;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-      setMobileMenuOpen(false);
+    if (href.startsWith('#')) {
+      // Hash Link Logic
+      if (location.pathname !== '/') {
+        navigate('/' + href);
+      } else {
+        const targetId = href.replace('#', '');
+        const element = document.getElementById(targetId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    } else {
+      // Page Link Logic (e.g. /why-phezulu, /blog)
+      navigate(href);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    setMobileMenuOpen(false);
   };
+
+  const handleLogoClick = () => {
+    if (location.pathname !== '/') {
+        navigate('/');
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
 
   const handleServiceClick = (e: React.MouseEvent, pillarTitle: string, serviceName?: string) => {
     e.preventDefault();
-    // 1. Scroll to services section
-    const servicesElement = document.getElementById('services');
-    if (servicesElement) {
-      servicesElement.scrollIntoView({ behavior: 'smooth' });
+    
+    // Check if we need to navigate home first
+    if (location.pathname !== '/') {
+       navigate('/');
+       setTimeout(() => {
+          const servicesElement = document.getElementById('services');
+          if (servicesElement) {
+              servicesElement.scrollIntoView({ behavior: 'smooth' });
+          }
+       }, 300);
+    } else {
+        const servicesElement = document.getElementById('services');
+        if (servicesElement) {
+            servicesElement.scrollIntoView({ behavior: 'smooth' });
+        }
     }
     
-    // 2. Open the modal via context
     openServiceModal(pillarTitle, serviceName);
-    
-    // 3. Close menus
+    setMobileMenuOpen(false);
+  };
+
+  const handleContactClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    openContact();
     setMobileMenuOpen(false);
   };
 
@@ -125,7 +162,7 @@ const Navbar: React.FC = () => {
         {/* Logo */}
         <div 
           className="flex items-center gap-3 cursor-pointer group"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          onClick={handleLogoClick}
         >
           {/* Custom SVG Logo based on Image */}
           <div className="relative w-11 h-11">
@@ -166,15 +203,20 @@ const Navbar: React.FC = () => {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {navItems.map((item) => (
+          {navItems.map((item) => {
+            // Logic to determine if a menu item should be highlighted
+            const isChildActive = item.dropdownItems?.some(sub => sub.href === location.pathname);
+            const isActive = (location.pathname === item.href) || 
+                             (location.pathname === '/' && activeSection === item.href.substring(1)) ||
+                             isChildActive;
+
+            return (
             <div key={item.name} className="relative group">
               <a 
                 href={item.href}
-                onClick={(e) => item.type === 'link' && handleLinkClick(e, item.href)}
+                onClick={(e) => handleLinkClick(e, item.href)}
                 className={`flex items-center gap-1 text-sm font-bold tracking-wide transition-colors py-2 relative ${
-                   activeSection === item.href.substring(1) 
-                    ? 'text-white' 
-                    : 'text-slate-400 hover:text-white'
+                   isActive ? 'text-white' : 'text-slate-400 hover:text-white'
                 }`}
               >
                 {item.name}
@@ -182,13 +224,13 @@ const Navbar: React.FC = () => {
                   <ChevronDown className="w-3.5 h-3.5 mt-0.5" />
                 )}
                 <span className={`absolute bottom-0 left-0 h-0.5 bg-crimson transition-all duration-300 ${
-                  activeSection === item.href.substring(1) ? 'w-full' : 'w-0 group-hover:w-full'
+                  isActive ? 'w-full' : 'w-0 group-hover:w-full'
                 }`} />
               </a>
 
               {/* Desktop Dropdown Menu (Standard) */}
               {item.type === 'dropdown' && item.dropdownItems && (
-                <div className="absolute top-full left-0 pt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform z-50">
+                <div className="absolute top-full left-0 pt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out delay-100 group-hover:delay-0 transform z-50">
                   <div className="bg-midnight border border-slate-800 rounded-lg shadow-xl overflow-hidden py-2">
                     {item.dropdownItems.map((subItem) => (
                       <a
@@ -205,10 +247,9 @@ const Navbar: React.FC = () => {
               )}
 
               {/* Desktop Mega Menu (Services) */}
-              {/* Changed to Fixed positioning to center in viewport and avoid overflow */}
               {item.type === 'mega' && (
-                 <div className="fixed left-0 right-0 top-[60px] pt-8 flex justify-center opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none group-hover:pointer-events-auto">
-                   <div className="w-[95vw] max-w-6xl bg-midnight/95 backdrop-blur-xl border border-slate-800 rounded-xl shadow-2xl p-8 grid grid-cols-3 gap-8 max-h-[85vh] overflow-y-auto">
+                 <div className="fixed left-0 right-0 top-[60px] pt-8 flex justify-center opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-in-out delay-100 group-hover:delay-0 z-50">
+                   <div className="w-[95vw] max-w-6xl bg-midnight/95 backdrop-blur-xl border border-slate-800 rounded-xl shadow-2xl p-8 grid grid-cols-3 gap-8 max-h-[85vh] overflow-y-auto pointer-events-auto">
                       {FALLBACK_PILLARS.map((pillar, idx) => (
                          <div key={idx} className="space-y-4">
                             <div className="flex items-center gap-2 pb-2 border-b border-slate-800">
@@ -238,7 +279,8 @@ const Navbar: React.FC = () => {
                 </div>
               )}
             </div>
-          ))}
+            );
+          })}
 
           {/* Theme Toggle */}
           <button
@@ -259,13 +301,12 @@ const Navbar: React.FC = () => {
             </AnimatePresence>
           </button>
           
-          <a 
-            href="#contact" 
-            onClick={(e) => handleLinkClick(e, '#contact')}
+          <button 
+            onClick={handleContactClick}
             className="bg-crimson hover:bg-red-700 text-white px-6 py-2.5 rounded hover:rounded-lg font-bold transition-all duration-300 shadow-[0_0_15px_rgba(217,4,41,0.3)] hover:shadow-[0_0_25px_rgba(217,4,41,0.5)] uppercase text-xs tracking-wider"
           >
             Contact Us
-          </a>
+          </button>
         </nav>
 
         {/* Mobile Toggle */}
@@ -309,13 +350,13 @@ const Navbar: React.FC = () => {
                 <div key={item.name}>
                   <div 
                     className="flex items-center justify-between cursor-pointer group"
-                    onClick={() => (item.type === 'dropdown' || item.type === 'mega') ? handleMobileNavClick(item.name) : setMobileMenuOpen(false)}
+                    onClick={() => (item.type === 'dropdown' || item.type === 'mega') ? handleMobileNavClick(item.name) : handleLinkClick({ preventDefault: () => {} } as any, item.href)}
                   >
                     <a 
                       href={item.href}
                       className="text-2xl font-heading font-bold text-slate-300 flex items-center gap-2"
                       onClick={(e) => {
-                        if (item.type !== 'link') {
+                        if (item.type !== 'link' && item.type !== 'page') {
                           e.preventDefault();
                           handleMobileNavClick(item.name);
                         } else {
@@ -389,13 +430,12 @@ const Navbar: React.FC = () => {
                   </AnimatePresence>
                 </div>
               ))}
-              <a 
-                href="#contact"
-                onClick={(e) => handleLinkClick(e, '#contact')}
+              <button 
+                onClick={handleContactClick}
                 className="mt-4 bg-crimson text-white text-center py-4 rounded font-bold text-xl shadow-lg shadow-crimson/20"
               >
                 Contact Us
-              </a>
+              </button>
             </div>
           </motion.div>
         )}

@@ -1,0 +1,25 @@
+server {
+    listen 80;
+    server_name phezulu.group www.phezulu.group api.phezulu.group;
+
+    # Serve uploads directly
+    location /uploads/ {
+        alias /var/www/phezulu/server/uploads/;
+        try_files $uri $uri/ =404;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Optional: serve static built client if placed here
+    # location / {
+    #   root /var/www/phezulu/server/client-dist;
+    #   try_files $uri $uri/ /index.html;
+    # }
+}
