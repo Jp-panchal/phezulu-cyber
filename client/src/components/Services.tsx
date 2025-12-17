@@ -7,6 +7,7 @@ import { fetchPillars } from '../lib/api';
 import type { Pillar, ServiceDetail } from '../types';
 import Button from './ui/Button';
 import { useServiceContext } from '../lib/ServiceContext';
+import { useContact } from '../lib/ContactContext';
 
 // --- Sub-component: Service Module Card (List View) ---
 interface ServiceModuleCardProps {
@@ -87,12 +88,14 @@ interface ServiceDeepDiveProps {
   service: ServiceDetail;
   onBack: () => void;
   pillarTitle: string;
+  onScheduleDemo: () => void;
 }
 
 const ServiceDeepDive: React.FC<ServiceDeepDiveProps> = ({
   service,
   onBack,
-  pillarTitle
+  pillarTitle,
+  onScheduleDemo
 }) => {
   // Use generic content if detailed fields aren't populated in API yet
   const fullDesc = service.fullDescription || [
@@ -230,7 +233,7 @@ const ServiceDeepDive: React.FC<ServiceDeepDiveProps> = ({
           </div>
 
           <div className="pt-4">
-            <Button className="w-full justify-center">Schedule Demo</Button>
+            <Button className="w-full justify-center" onClick={onScheduleDemo}>Schedule Demo</Button>
           </div>
 
         </div>
@@ -258,6 +261,7 @@ const Services: React.FC = () => {
 
   // Use Context for Modal State
   const { selectedPillarTitle, selectedServiceName, openServiceModal, closeServiceModal } = useServiceContext();
+  const { openContact } = useContact();
 
   // Map string icon names from API/DB to actual Lucide components
   const iconMap: Record<string, LucideIcon> = {
@@ -361,6 +365,13 @@ const Services: React.FC = () => {
     if (selectedServiceName) {
       openServiceModal(selectedPillarTitle!);
     }
+  };
+
+  const handleScheduleDemo = () => {
+    // Close the service modal so the contact overlay is unobstructed, then open Contact.
+    closeServiceModal();
+    setActiveServiceDetail(null);
+    openContact();
   };
 
   const categories = ['All', ...pillars.map(p => p.title)];
@@ -506,7 +517,7 @@ const Services: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-0 z-[100] bg-midnight flex flex-col overflow-hidden"
+            className="fixed inset-0 z-[100] bg-midnight flex flex-col overflow-y-auto"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-slate-800 bg-midnight/90 backdrop-blur-xl z-20 shrink-0">
@@ -527,10 +538,10 @@ const Services: React.FC = () => {
               </button>
             </div>
 
-            {/* Content Area - No Scroll */}
-            <div className="flex-1 p-6 md:p-12 relative flex flex-col h-full overflow-hidden">
+            {/* Content Area - Scrollable */}
+            <div className="flex-1 p-6 md:p-12 relative flex flex-col">
               <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none" />
-              <div className="max-w-6xl mx-auto w-full relative z-10 flex flex-col h-full">
+              <div className="max-w-6xl mx-auto w-full relative z-10 flex flex-col">
 
                 {/* VIEW SWITCHER: List or Deep Dive */}
                 <AnimatePresence mode="wait">
@@ -541,6 +552,7 @@ const Services: React.FC = () => {
                         service={activeServiceDetail}
                         onBack={handleBackToCatalog}
                         pillarTitle={selectedPillar.title}
+                        onScheduleDemo={handleScheduleDemo}
                       />
                     </div>
                   ) : (
