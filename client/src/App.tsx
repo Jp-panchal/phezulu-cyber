@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Background from './components/Background';
 import Navbar from './components/Navbar';
@@ -196,6 +196,7 @@ function App() {
           {/* Admin Routes */}
           <Route path="/admin/login" element={<Login />} />
           <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="employees" element={<EmployeeManager />} />
             <Route path="partners" element={<PartnerManager />} />
