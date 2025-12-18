@@ -8,13 +8,23 @@ interface Employee {
   role: string;
   bio: string;
   image: string;
-  stats: { label: string; value: string }[];
+  achievement: string;
+  speciality: string;
+  email: string;
+  linkedin: string;
 }
 
 const EmployeeManager: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [formData, setFormData] = useState<Employee>({
-    name: '', role: '', bio: '', image: '', stats: []
+    name: '',
+    role: '',
+    bio: '',
+    image: '',
+    achievement: '',
+    speciality: '',
+    email: '',
+    linkedin: ''
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
@@ -52,7 +62,16 @@ const EmployeeManager: React.FC = () => {
   };
 
   const resetForm = () => {
-    setFormData({ name: '', role: '', bio: '', image: '', stats: [] });
+    setFormData({
+      name: '',
+      role: '',
+      bio: '',
+      image: '',
+      achievement: '',
+      speciality: '',
+      email: '',
+      linkedin: ''
+    });
     setSelectedFile(null);
     setPreviewUrl('');
     setIsEditing(false);
@@ -214,6 +233,55 @@ const EmployeeManager: React.FC = () => {
             />
           </div>
 
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs uppercase text-slate-500 font-bold mb-2">Achievement</label>
+              <input
+                type="text"
+                placeholder="e.g. Led 50+ incident responses"
+                value={formData.achievement}
+                onChange={e => setFormData({ ...formData, achievement: e.target.value })}
+                className="w-full bg-slate-800 p-3 rounded text-white border border-slate-700 outline-none"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs uppercase text-slate-500 font-bold mb-2">Speciality</label>
+              <input
+                type="text"
+                placeholder="e.g. Cloud Security, DFIR"
+                value={formData.speciality}
+                onChange={e => setFormData({ ...formData, speciality: e.target.value })}
+                className="w-full bg-slate-800 p-3 rounded text-white border border-slate-700 outline-none"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs uppercase text-slate-500 font-bold mb-2">Email</label>
+              <input
+                type="email"
+                placeholder="name@company.com"
+                value={formData.email}
+                onChange={e => setFormData({ ...formData, email: e.target.value })}
+                className="w-full bg-slate-800 p-3 rounded text-white border border-slate-700 outline-none"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs uppercase text-slate-500 font-bold mb-2">LinkedIn Profile URL</label>
+              <input
+                type="url"
+                placeholder="https://linkedin.com/in/username"
+                value={formData.linkedin}
+                onChange={e => setFormData({ ...formData, linkedin: e.target.value })}
+                className="w-full bg-slate-800 p-3 rounded text-white border border-slate-700 outline-none"
+              />
+            </div>
+          </div>
+
           <div className="md:col-span-2 pt-4 border-t border-slate-800">
             <Button type="submit" variant="primary" className="w-full md:w-auto" disabled={isUploading}>
               {isUploading ? <span className="animate-pulse">Uploading...</span> : isEditing ? 'Update Expert' : 'Add To Team'}
@@ -233,6 +301,17 @@ const EmployeeManager: React.FC = () => {
               <h3 className="text-lg font-bold text-white mb-1">{emp.name}</h3>
               <p className="text-xs text-crimson font-mono uppercase tracking-widest mb-4">{emp.role}</p>
               <p className="text-sm text-slate-400 line-clamp-3 mb-4 h-16">{emp.bio}</p>
+              <div className="text-left space-y-2 text-sm text-slate-300 bg-slate-800/50 border border-slate-800 rounded-lg p-3">
+                <div><span className="text-slate-500 text-[11px] uppercase">Achievement:</span> <span className="text-white">{emp.achievement}</span></div>
+                <div><span className="text-slate-500 text-[11px] uppercase">Speciality:</span> <span className="text-white">{emp.speciality}</span></div>
+                <div className="break-words"><span className="text-slate-500 text-[11px] uppercase">Email:</span> <span className="text-white">{emp.email}</span></div>
+                {emp.linkedin && (
+                  <div className="break-words">
+                    <span className="text-slate-500 text-[11px] uppercase">LinkedIn:</span>{' '}
+                    <a href={emp.linkedin} target="_blank" rel="noreferrer" className="text-crimson hover:underline break-all">{emp.linkedin}</a>
+                  </div>
+                )}
+              </div>
 
               <div className="flex justify-center gap-2 pt-4 border-t border-slate-800/50">
                 <button onClick={() => handleEdit(emp)} className="p-2 text-slate-400 hover:text-amber hover:bg-slate-800 rounded transition-colors" title="Edit">

@@ -8,13 +8,15 @@ import type { Pillar, ServiceDetail } from '../types';
 import Button from './ui/Button';
 import { useServiceContext } from '../lib/ServiceContext';
 import { useContact } from '../lib/ContactContext';
+import { useNavigate } from 'react-router-dom';
+import { slugify } from '../lib/slug';
 
 // --- Sub-component: Service Module Card (List View) ---
 interface ServiceModuleCardProps {
   service: ServiceDetail;
   index: number;
   isHighlighted?: boolean;
-  onLearnMore: (service: ServiceDetail) => void;
+  onLearnMore: (service: ServiceDetail, pillarTitle?: string) => void;
   // Optional prop to show which pillar this belongs to in search results
   pillarContext?: string;
 }
@@ -71,7 +73,7 @@ const ServiceModuleCard: React.FC<ServiceModuleCardProps> = ({
         <button
           onClick={(e) => {
             e.stopPropagation();
-            onLearnMore(service);
+            onLearnMore(service, pillarContext);
           }}
           className="w-full py-3 rounded bg-slate-800 hover:bg-crimson text-white text-xs font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 group/btn"
         >
@@ -262,6 +264,7 @@ const Services: React.FC = () => {
   // Use Context for Modal State
   const { selectedPillarTitle, selectedServiceName, openServiceModal, closeServiceModal } = useServiceContext();
   const { openContact } = useContact();
+  const navigate = useNavigate();
 
   // Map string icon names from API/DB to actual Lucide components
   const iconMap: Record<string, LucideIcon> = {
@@ -374,6 +377,15 @@ const Services: React.FC = () => {
     openContact();
   };
 
+  const goToServicePage = (service: ServiceDetail, pillarTitle?: string) => {
+    const pillar = pillarTitle || service.pillarTitle || selectedPillar?.title;
+    if (!pillar) return;
+    const path = `/services/${slugify(pillar)}/${slugify(service.name)}`;
+    closeServiceModal();
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const categories = ['All', ...pillars.map(p => p.title)];
 
   return (
@@ -458,7 +470,7 @@ const Services: React.FC = () => {
                     index={idx}
                     service={service}
                     pillarContext={service.pillarTitle}
-                    onLearnMore={() => openServiceModal(service.pillarTitle, service.name)}
+                    onLearnMore={(svc, pillarTitle) => goToServicePage(svc, pillarTitle || svc.pillarTitle)}
                   />
                 ))
               ) : (
@@ -594,7 +606,7 @@ const Services: React.FC = () => {
                                     service={service}
                                     index={idx}
                                     isHighlighted={service.name === selectedServiceName}
-                                    onLearnMore={(s) => setActiveServiceDetail(s)}
+                                    onLearnMore={(s) => goToServicePage(s, selectedPillar?.title)}
                                   />
                                 ))}
 

@@ -4,12 +4,15 @@ import Button from './ui/Button';
 import { ArrowRight, MessageSquare } from 'lucide-react';
 import { fetchSystemStatus, type SystemStatus } from '../lib/api';
 import { useContact } from '../lib/ContactContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 
 const Hero: React.FC = () => {
   const [status, setStatus] = useState<SystemStatus | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { openContact } = useContact();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const getStatus = async () => {
@@ -50,7 +53,19 @@ const Hero: React.FC = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button variant="primary" icon={<ArrowRight size={18} />} aria-label="Explore Solutions">
+            <Button
+              variant="primary"
+              icon={<ArrowRight size={18} />}
+              aria-label="Explore Solutions"
+              onClick={() => {
+                if (location.pathname !== '/') {
+                  navigate('/#services');
+                } else {
+                  const servicesElement = document.getElementById('services');
+                  servicesElement?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            >
               Explore Solutions
             </Button>
             <Button

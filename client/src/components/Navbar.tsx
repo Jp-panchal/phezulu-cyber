@@ -4,9 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ChevronRight, ChevronDown } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import { useServiceContext } from '../lib/ServiceContext';
 import { useContact } from '../lib/ContactContext';
 import { FALLBACK_PILLARS } from '../lib/api';
+import { slugify } from '../lib/slug';
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -15,8 +15,6 @@ const Navbar: React.FC = () => {
   const [activeDesktopMenu, setActiveDesktopMenu] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>('');
 
-
-  const { openServiceModal } = useServiceContext();
   const { openContact } = useContact();
 
   const navigate = useNavigate();
@@ -149,25 +147,23 @@ const Navbar: React.FC = () => {
 
   const handleServiceClick = (e: React.MouseEvent, pillarTitle: string, serviceName?: string) => {
     e.preventDefault();
+    setActiveDesktopMenu(null);
+    setMobileMenuOpen(false);
 
-    // Check if we need to navigate home first
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        const servicesElement = document.getElementById('services');
-        if (servicesElement) {
-          servicesElement.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 300);
-    } else {
-      const servicesElement = document.getElementById('services');
-      if (servicesElement) {
-        servicesElement.scrollIntoView({ behavior: 'smooth' });
-      }
+    if (serviceName) {
+      const path = `/services/${slugify(pillarTitle)}/${slugify(serviceName)}`;
+      navigate(path);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
 
-    openServiceModal(pillarTitle, serviceName);
-    setMobileMenuOpen(false);
+    // No specific service, fallback to services section
+    if (location.pathname !== '/') {
+      navigate('/#services');
+    } else {
+      const servicesElement = document.getElementById('services');
+      servicesElement?.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const handleContactClick = (e: React.MouseEvent) => {

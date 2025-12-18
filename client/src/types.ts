@@ -49,6 +49,10 @@ export interface ContactData {
   name: string;
   email: string;
   company: string;
+  country: string;
+  service: string;
+  phoneCountryCode: string;
+  phone: string;
   message: string;
 }
 

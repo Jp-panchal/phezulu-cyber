@@ -8,12 +8,28 @@ import { useContact } from '../lib/ContactContext';
 
 const ContactModal: React.FC = () => {
   const { isContactOpen, closeContact } = useContact();
-  const [formData, setFormData] = useState<ContactData>({
+  const countryOptions = ['South Africa', 'India', 'United States', 'United Kingdom', 'United Arab Emirates'];
+  const serviceOptions = ['SOC / MDR', 'Penetration Testing', 'Cloud Advisory', 'AI & Data', 'Incident Response', 'Other'];
+  const dialingCodes = [
+    { code: '+27', label: 'ZA (+27)' },
+    { code: '+91', label: 'IN (+91)' },
+    { code: '+1', label: 'US (+1)' },
+    { code: '+44', label: 'UK (+44)' },
+    { code: '+971', label: 'UAE (+971)' },
+  ];
+
+  const initialFormState: ContactData = {
     name: '',
     email: '',
     company: '',
-    message: ''
-  });
+    country: '',
+    service: '',
+    phoneCountryCode: dialingCodes[0].code,
+    phone: '',
+    message: '',
+  };
+
+  const [formData, setFormData] = useState<ContactData>(initialFormState);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   // Lock body scroll when modal is open
@@ -26,7 +42,7 @@ const ContactModal: React.FC = () => {
     return () => { document.body.style.overflow = ''; };
   }, [isContactOpen]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
@@ -38,7 +54,7 @@ const ContactModal: React.FC = () => {
       const success = await submitContact(formData);
       if (success) {
         setStatus('success');
-        setFormData({ name: '', email: '', company: '', message: '' });
+        setFormData(initialFormState);
       } else {
         setStatus('error');
       }
@@ -152,6 +168,39 @@ const ContactModal: React.FC = () => {
                   </div>
                 </div>
 
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-mono text-slate-500 uppercase tracking-widest">Country</label>
+                  <select
+                    name="country"
+                    value={formData.country}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-crimson transition-colors placeholder:text-slate-600 text-sm"
+                  >
+                    <option value="" disabled>Select country</option>
+                    {countryOptions.map(country => (
+                      <option key={country} value={country}>{country}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-mono text-slate-500 uppercase tracking-widest">Service</label>
+                  <select
+                    name="service"
+                    value={formData.service}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-crimson transition-colors placeholder:text-slate-600 text-sm"
+                  >
+                    <option value="" disabled>Select a service</option>
+                    {serviceOptions.map(service => (
+                      <option key={service} value={service}>{service}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
                 <div className="space-y-2">
                   <label className="text-xs font-mono text-slate-500 uppercase tracking-widest">Contact Point</label>
                   <input
@@ -164,6 +213,30 @@ const ContactModal: React.FC = () => {
                     className="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-crimson transition-colors placeholder:text-slate-600 text-sm"
                   />
                 </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-mono text-slate-500 uppercase tracking-widest">Mobile (Optional)</label>
+                <div className="grid grid-cols-[130px_1fr] gap-3">
+                  <select
+                    name="phoneCountryCode"
+                    value={formData.phoneCountryCode}
+                    onChange={handleChange}
+                    className="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-3 py-3 text-white focus:outline-none focus:border-crimson transition-colors placeholder:text-slate-600 text-sm"
+                  >
+                    {dialingCodes.map(({ code, label }) => (
+                      <option key={code} value={code}>{label}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="Mobile number (optional)"
+                    className="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-crimson transition-colors placeholder:text-slate-600 text-sm"
+                  />
+                </div>
+              </div>
 
                 <div className="space-y-2">
                   <label className="text-xs font-mono text-slate-500 uppercase tracking-widest">Briefing</label>

@@ -16,6 +16,7 @@ import ContactModal from './components/ContactModal';
 import WhyPhezuluPage from './pages/WhyPhezuluPage';
 import InsightCategoryPage from './pages/InsightCategoryPage';
 import InsightDetailPage from './pages/InsightDetailPage';
+import ServiceDetailPage from './pages/ServiceDetailPage';
 
 // Admin Components
 import AdminLayout from './components/admin/AdminLayout';
@@ -116,6 +117,23 @@ const InsightDetailLayout = () => {
   );
 };
 
+// Layout wrapper for Service Detail Page
+const ServiceDetailLayout = () => {
+  return (
+    <ContactProvider>
+      <div className="relative min-h-screen text-slate-200 font-sans selection:bg-sapphire/30 selection:text-white">
+        <Background />
+        <Navbar />
+        <main className="flex flex-col">
+          <ServiceDetailPage />
+        </main>
+        <Footer />
+        <ContactModal />
+      </div>
+    </ContactProvider>
+  );
+};
+
 function App() {
   return (
     <ServiceProvider>
@@ -169,6 +187,9 @@ function App() {
 
           {/* Individual Insight Route */}
           <Route path="/insights/:id" element={<InsightDetailLayout />} />
+
+          {/* Service detail routes */}
+          <Route path="/services/:pillarSlug/:serviceSlug" element={<ServiceDetailLayout />} />
 
           <Route path="/services" element={<Navigate to="/#services" replace />} />
 
