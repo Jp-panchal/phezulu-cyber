@@ -8,8 +8,15 @@ const Partner = require('../models/Partner');
 // @access  Public
 router.get('/', async (req, res) => {
   try {
-    const partners = await Partner.find();
-    res.json(partners);
+    const partners = await Partner.findAll({ order: [['created_at', 'DESC']] });
+    // Map company_name to name for frontend compatibility
+    const formatted = partners.map(p => ({
+      ...p.toJSON(),
+      _id: p.id,
+      name: p.company_name,
+      logoUrl: p.logo_url || p.logo_file
+    }));
+    res.json(formatted);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

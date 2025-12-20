@@ -1,16 +1,63 @@
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const mongoose = require('mongoose');
-
-const InsightSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true }, // Slug-like ID for routing
-  title: { type: String, required: true },
-  category: { type: String, required: true }, // e.g., 'Webinar', 'Blog', 'Report'
-  date: { type: String, required: true },
-  excerpt: { type: String, required: true },
-  content: [{ type: String }], // Array of paragraphs
-  image: { type: String },     // URL for header image
-  link: { type: String, default: '#' },
-  isFeatured: { type: Boolean, default: false }
+const Insight = sequelize.define('Insight', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  slug: {
+    type: DataTypes.STRING(255),
+    allowNull: false,
+    unique: true
+  },
+  title: {
+    type: DataTypes.STRING(500),
+    allowNull: false
+  },
+  category: {
+    type: DataTypes.STRING(100),
+    allowNull: false
+  },
+  date: {
+    type: DataTypes.STRING(50),
+    allowNull: false
+  },
+  excerpt: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  content: {
+    type: DataTypes.TEXT, // Store JSON array as string
+    allowNull: false,
+    get() {
+      const rawValue = this.getDataValue('content');
+      return rawValue ? JSON.parse(rawValue) : [];
+    },
+    set(value) {
+      this.setDataValue('content', JSON.stringify(value));
+    }
+  },
+  image: {
+    type: DataTypes.STRING(500),
+    allowNull: false
+  },
+  link: {
+    type: DataTypes.STRING(500),
+    allowNull: true,
+    defaultValue: '#'
+  },
+  is_featured: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  }
+}, {
+  tableName: 'insights',
+  timestamps: true,
+  createdAt: 'created_at',
+  updatedAt: 'updated_at'
 });
 
-module.exports = mongoose.model('Insight', InsightSchema);
+module.exports = Insight;
