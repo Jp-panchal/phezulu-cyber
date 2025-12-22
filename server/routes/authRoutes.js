@@ -11,15 +11,13 @@ const auth = require('../middleware/auth');
 router.post('/register', async (req, res) => {
   const { username, password } = req.body;
   try {
-    let user = await User.findOne({ username });
+    let user = await User.findOne({ where: { username } });
     if (user) return res.status(400).json({ msg: 'User already exists' });
 
-    user = new User({ username, password });
-
     const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    await user.save();
+    user = await User.create({ username, password: hashedPassword });
 
     const payload = { user: { id: user.id } };
     jwt.sign(payload, process.env.JWT_SECRET || 'secret', { expiresIn: 360000 }, (err, token) => {
@@ -37,7 +35,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
-    let user = await User.findOne({ username });
+    let user = await User.findOne({ where: { username } });
     if (!user) return res.status(400).json({ msg: 'Invalid Credentials' });
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -58,7 +56,9 @@ router.post('/login', async (req, res) => {
 // @desc    Get logged in user data
 router.get('/user', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findByPk(req.user.id, {
+      attributes: { exclude: ['password'] }
+    });
     res.json(user);
   } catch (err) {
     res.status(500).send('Server Error');

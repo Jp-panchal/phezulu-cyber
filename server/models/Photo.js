@@ -1,23 +1,32 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const PhotoSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true
-    },
-    imageUrl: {
-        type: String,
-        required: true
-    },
-    category: {
-        type: String, // 'company', 'webinar'
-        required: true,
-        enum: ['company', 'webinar']
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
+const Photo = sequelize.define('Photo', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  title: {
+    type: DataTypes.STRING(255),
+    allowNull: false
+  },
+  url: {
+    type: DataTypes.STRING(500),
+    allowNull: false
+  },
+  category: {
+    type: DataTypes.STRING(50),
+    allowNull: false,
+    validate: {
+      isIn: [['company', 'webinar']]
     }
+  }
+}, {
+  tableName: 'photos',
+  timestamps: true,
+  createdAt: 'created_at',
+  updatedAt: false
 });
 
-module.exports = mongoose.model('Photo', PhotoSchema);
+module.exports = Photo;

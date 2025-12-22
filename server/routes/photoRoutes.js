@@ -8,8 +8,13 @@ const auth = require('../middleware/auth');
 // @access  Public
 router.get('/', async (req, res) => {
     try {
-        const photos = await Photo.find().sort({ createdAt: -1 });
-        res.json(photos);
+        const photos = await Photo.findAll({ order: [['created_at', 'DESC']] });
+        const formatted = photos.map(p => ({ 
+            ...p.toJSON(), 
+            _id: p.id,
+            imageUrl: p.url
+        }));
+        res.json(formatted);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -20,17 +25,19 @@ router.get('/', async (req, res) => {
 // @desc    Add a photo
 // @access  Private
 router.post('/', auth, async (req, res) => {
-    const { title, imageUrl, category } = req.body;
+    const { title, imageUrl, url, category } = req.body;
 
     try {
-        const newPhoto = new Photo({
+        const photo = await Photo.create({
             title,
-            imageUrl,
+            url: url || imageUrl, // Accept either field name
             category
         });
-
-        const photo = await newPhoto.save();
-        res.json(photo);
+        res.json({ 
+            ...photo.toJSON(), 
+            _id: photo.id,
+            imageUrl: photo.url
+        });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -42,13 +49,13 @@ router.post('/', auth, async (req, res) => {
 // @access  Private
 router.delete('/:id', auth, async (req, res) => {
     try {
-        const photo = await Photo.findById(req.params.id);
+        const photo = await Photo.findByPk(req.params.id);
 
         if (!photo) {
             return res.status(404).json({ msg: 'Photo not found' });
         }
 
-        await photo.deleteOne();
+        await photo.destroy();
         res.json({ msg: 'Photo removed' });
     } catch (err) {
         console.error(err.message);

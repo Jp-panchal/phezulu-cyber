@@ -1,15 +1,49 @@
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const mongoose = require('mongoose');
-
-const EmployeeSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  role: { type: String, required: true },
-  bio: { type: String, required: true },
-  image: { type: String, required: true },
-  stats: [{
-    label: { type: String },
-    value: { type: String }
-  }]
+const Employee = sequelize.define('Employee', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  name: {
+    type: DataTypes.STRING(255),
+    allowNull: false
+  },
+  role: {
+    type: DataTypes.STRING(255),
+    allowNull: false
+  },
+  bio: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  image: {
+    type: DataTypes.STRING(500),
+    allowNull: false
+  },
+  achievement: {
+    type: DataTypes.STRING(500),
+    allowNull: false
+  },
+  speciality: {
+    type: DataTypes.STRING(255),
+    allowNull: false
+  },
+  email: {
+    type: DataTypes.STRING(255),
+    allowNull: false
+  },
+  linkedin: {
+    type: DataTypes.STRING(500),
+    allowNull: false
+  }
+}, {
+  tableName: 'employees',
+  timestamps: true,
+  createdAt: 'created_at',
+  updatedAt: 'updated_at'
 });
 
-module.exports = mongoose.model('Employee', EmployeeSchema);
+module.exports = Employee;

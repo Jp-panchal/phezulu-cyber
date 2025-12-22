@@ -1,7 +1,7 @@
 
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
+const sequelize = require('./config/database');
 const cors = require('cors');
 const path = require('path');
 const pillarRoutes = require('./routes/pillarRoutes');
@@ -36,15 +36,22 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/photos', photoRoutes);
 
 // Database Connection
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/phezulu';
-
-// Connect to MongoDB
-mongoose.connect(MONGO_URI)
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => {
-    console.log('MongoDB Connection Error:', err);
+// Connect to Azure SQL
+const connectDatabase = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Azure SQL Database Connected');
+    
+    // Sync all models (creates tables if they don't exist)
+    await sequelize.sync({ alter: false }); // Use { alter: true } in dev to auto-update schema
+    console.log('Database tables synchronized');
+  } catch (err) {
+    console.error('Database Connection Error:', err);
     console.log('Running in offline mode with static responses.');
-  });
+  }
+};
+
+connectDatabase();
 
 // --- SERVE FRONTEND (Production/Preview) ---
 // This allows the server to host the React app on the same port (5000)
