@@ -20,15 +20,35 @@ export interface ServiceCategory {
   items: ServiceItem[];
 }
 
+export interface ServiceAspect {
+  title: string;
+  description: string;
+  iconName?: string;
+}
+
+export interface BenefitItem {
+  title: string;
+  description: string;
+  iconName?: string;
+}
+
+export interface ProcessStep {
+  title: string;
+  description: string;
+  stepNumber?: number;
+}
+
 export interface ServiceDetail {
   name: string;
   description: string;
   // Extended content for Deep Dive view
   fullDescription?: string[]; // Array of paragraphs for the main content
   features?: string[]; // List of key capabilities
-  benefits?: string[]; // List of business benefits
+  benefits?: BenefitItem[] | string[]; // List of business benefits (supports both old string array and new object array)
+  processSteps?: ProcessStep[]; // List of process steps (e.g., "How it Works")
   diagramUrl?: string; // Optional architecture diagram
   pillarTitle?: string; // Optional reference for flattened lists
+  aspects?: ServiceAspect[]; // New field for detailed sub-services
 }
 
 export interface Pillar {

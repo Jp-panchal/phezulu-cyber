@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Trash2, Plus, Edit2, Upload, X, Shield, Search, Filter, ChevronRight, Check } from 'lucide-react';
+import { Plus, Edit2, Upload, X, Shield, Search, Check } from 'lucide-react';
 import { fetchPillars } from '../../lib/api';
 import type { Pillar, ServiceDetail } from '../../types';
 
@@ -16,7 +16,7 @@ const ServiceManager: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
 
     // Ideally we'd use ID, but likely using Name as identifier based on current logic
-    const [activeServiceId, setActiveServiceId] = useState<string | null>(null);
+    const [_activeServiceId, setActiveServiceId] = useState<string | null>(null);
 
     const [formData, setFormData] = useState({
         name: '',

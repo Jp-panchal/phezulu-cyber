@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Trash2, Plus, Calendar, Edit2, Upload, Image as ImageIcon, X, Search, Filter } from 'lucide-react';
+import { Plus, Calendar, Edit2, Upload, Image as ImageIcon, X, Search } from 'lucide-react';
 import { fetchInsights } from '../../lib/api';
 
 interface Insight {

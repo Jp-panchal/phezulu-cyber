@@ -7,16 +7,12 @@ import {
   fetchEmployees
 } from '../../lib/api';
 import {
-  LayoutDashboard,
-  Users,
   Briefcase,
   Shield,
   Image as ImageIcon,
   LineChart,
   Activity,
   FileText,
-  Video,
-  AlertTriangle,
   ArrowUpRight,
   Clock
 } from 'lucide-react';

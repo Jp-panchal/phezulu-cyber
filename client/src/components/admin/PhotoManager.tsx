@@ -1,19 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Trash2, Plus, Upload, Image as ImageIcon, X, Filter } from 'lucide-react';
-import { fetchPhotos } from '../../lib/api';
-
-interface Photo {
-    _id?: string;
-    title: string;
-    url: string;
-    category: 'company' | 'webinar';
-    date: string;
-}
+import { Trash2, Plus, Upload, Image as ImageIcon, X } from 'lucide-react';
+import { fetchPhotos, type Photo } from '../../lib/api';
 
 const PhotoManager: React.FC = () => {
     const [photos, setPhotos] = useState<Photo[]>([]);
     const [activeFilter, setActiveFilter] = useState('All');
-    const [isUploading, setIsUploading] = useState(false);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [formData, setFormData] = useState({ title: '', category: 'company', url: '' });
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -60,7 +51,6 @@ const PhotoManager: React.FC = () => {
     const closeForm = () => {
         setFormData({ title: '', category: 'company', url: '' });
         setIsFormOpen(false);
-        setIsUploading(false);
     };
 
     const handleDelete = async (id: string) => {

@@ -11,15 +11,13 @@ import {
   Menu,
   X,
   Bell,
-  Search,
-  ChevronDown
+  Search
 } from 'lucide-react';
 
 const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
