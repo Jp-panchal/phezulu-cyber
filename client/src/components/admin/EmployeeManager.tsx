@@ -36,7 +36,10 @@ const EmployeeManager: React.FC = () => {
 
   const fetchEmployees = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/admin/employees');
+      const token = localStorage.getItem('token');
+      const res = await fetch('http://localhost:5000/api/admin/employees', {
+        headers: { 'x-auth-token': token || '' }
+      });
       const data = await res.json();
       setEmployees(data);
     } catch (err) { console.error(err); }

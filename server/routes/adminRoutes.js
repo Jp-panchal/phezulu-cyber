@@ -10,7 +10,7 @@ const Service = require('../models/Service');
 const Photo = require('../models/Photo');
 
 // --- EMPLOYEES ---
-router.get('/employees', async (req, res) => {
+router.get('/employees', auth, async (req, res) => {
   try {
     const employees = await Employee.findAll({ order: [['created_at', 'DESC']] });
     // Map to include _id for frontend compatibility
@@ -36,7 +36,7 @@ router.put('/employees/:id', auth, async (req, res) => {
   try {
     const employee = await Employee.findByPk(req.params.id);
     if (!employee) return res.status(404).json({ msg: 'Employee not found' });
-    
+
     await employee.update(req.body);
     res.json({ ...employee.toJSON(), _id: employee.id });
   } catch (err) {
@@ -55,7 +55,7 @@ router.delete('/employees/:id', auth, async (req, res) => {
 });
 
 // --- PARTNERS ---
-router.get('/partners', async (req, res) => {
+router.get('/partners', auth, async (req, res) => {
   try {
     const partners = await Partner.findAll({ order: [['created_at', 'DESC']] });
     // Map company_name to name for frontend and include _id
@@ -84,10 +84,10 @@ router.post('/partners', auth, async (req, res) => {
       data.logo_url = data.logoUrl;
       delete data.logoUrl;
     }
-    
+
     const partner = await Partner.create(data);
-    res.json({ 
-      ...partner.toJSON(), 
+    res.json({
+      ...partner.toJSON(),
       _id: partner.id,
       name: partner.company_name,
       logoUrl: partner.logo_url || partner.logo_file
@@ -102,7 +102,7 @@ router.put('/partners/:id', auth, async (req, res) => {
   try {
     const partner = await Partner.findByPk(req.params.id);
     if (!partner) return res.status(404).json({ msg: 'Partner not found' });
-    
+
     // Accept name from frontend, store as company_name
     const data = { ...req.body };
     if (data.name && !data.company_name) {
@@ -113,10 +113,10 @@ router.put('/partners/:id', auth, async (req, res) => {
       data.logo_url = data.logoUrl;
       delete data.logoUrl;
     }
-    
+
     await partner.update(data);
-    res.json({ 
-      ...partner.toJSON(), 
+    res.json({
+      ...partner.toJSON(),
       _id: partner.id,
       name: partner.company_name,
       logoUrl: partner.logo_url || partner.logo_file
@@ -148,7 +148,7 @@ router.post('/insights', auth, async (req, res) => {
     if (!data.content && data.excerpt) {
       data.content = [data.excerpt];
     }
-    
+
     const insight = await Insight.create(data);
     res.json({ ...insight.toJSON(), _id: insight.id, id: insight.slug });
   } catch (err) {
@@ -161,7 +161,7 @@ router.put('/insights/:id', auth, async (req, res) => {
   try {
     const insight = await Insight.findByPk(req.params.id);
     if (!insight) return res.status(404).json({ msg: 'Insight not found' });
-    
+
     await insight.update(req.body);
     res.json({ ...insight.toJSON(), _id: insight.id, id: insight.slug });
   } catch (err) {
@@ -180,11 +180,11 @@ router.delete('/insights/:id', auth, async (req, res) => {
 });
 
 // --- PHOTOS ---
-router.get('/photos', async (req, res) => {
+router.get('/photos', auth, async (req, res) => {
   try {
     const photos = await Photo.findAll({ order: [['created_at', 'DESC']] });
-    const formatted = photos.map(p => ({ 
-      ...p.toJSON(), 
+    const formatted = photos.map(p => ({
+      ...p.toJSON(),
       _id: p.id,
       imageUrl: p.url
     }));
@@ -203,10 +203,10 @@ router.post('/photos', auth, async (req, res) => {
       data.url = data.imageUrl;
       delete data.imageUrl;
     }
-    
+
     const photo = await Photo.create(data);
-    res.json({ 
-      ...photo.toJSON(), 
+    res.json({
+      ...photo.toJSON(),
       _id: photo.id,
       imageUrl: photo.url
     });
@@ -226,7 +226,7 @@ router.delete('/photos/:id', auth, async (req, res) => {
 });
 
 // --- SERVICES ---
-router.get('/services', async (req, res) => {
+router.get('/services', auth, async (req, res) => {
   try {
     const services = await Service.findAll({ order: [['category', 'ASC'], ['name', 'ASC']] });
     const formatted = services.map(s => ({
@@ -253,7 +253,7 @@ router.post('/services', auth, async (req, res) => {
       // pillarId might be title or id, use as category
       data.category = data.pillarId;
     }
-    
+
     const service = await Service.create(data);
     res.json({
       ...service.toJSON(),
@@ -271,7 +271,7 @@ router.put('/services/:id', auth, async (req, res) => {
   try {
     const service = await Service.findByPk(req.params.id);
     if (!service) return res.status(404).json({ msg: 'Service not found' });
-    
+
     // Accept diagramUrl from frontend, map to diagram_url
     const data = { ...req.body };
     if (data.diagramUrl && !data.diagram_url) {
@@ -281,7 +281,7 @@ router.put('/services/:id', auth, async (req, res) => {
     if (data.pillarId && !data.category) {
       data.category = data.pillarId;
     }
-    
+
     await service.update(data);
     res.json({
       ...service.toJSON(),
@@ -300,9 +300,9 @@ router.put('/services/:pillarId/:name', auth, async (req, res) => {
     const pillarId = req.params.pillarId;
     const name = decodeURIComponent(req.params.name);
     const service = await Service.findOne({ where: { category: pillarId, name: name } });
-    
+
     if (!service) return res.status(404).json({ msg: 'Service not found' });
-    
+
     // Accept diagramUrl from frontend, map to diagram_url
     const data = { ...req.body };
     if (data.diagramUrl && !data.diagram_url) {
@@ -312,7 +312,7 @@ router.put('/services/:pillarId/:name', auth, async (req, res) => {
     if (data.pillarId && !data.category) {
       data.category = data.pillarId;
     }
-    
+
     await service.update(data);
     res.json({
       ...service.toJSON(),
@@ -355,7 +355,7 @@ router.put('/pillars/:id', auth, async (req, res) => {
   try {
     const pillar = await Pillar.findByPk(req.params.id);
     if (!pillar) return res.status(404).json({ msg: 'Pillar not found' });
-    
+
     await pillar.update(req.body);
     res.json({ ...pillar.toJSON(), iconName: pillar.icon_name });
   } catch (err) {

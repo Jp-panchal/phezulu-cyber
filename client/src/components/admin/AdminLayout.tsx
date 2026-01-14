@@ -18,11 +18,34 @@ const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token) navigate('/admin/login');
+    if (!token) {
+      navigate('/admin/login', { replace: true });
+    } else {
+      // Optionally: validate token with server here for stronger security
+      setIsAuthenticated(true);
+    }
   }, [navigate]);
+
+  // Show loading state while checking authentication
+  if (isAuthenticated === null) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-950">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-t-crimson border-slate-700 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-400 text-sm">Verifying authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If not authenticated, don't render anything (redirect already triggered)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const handleLogout = () => {
     localStorage.removeItem('token');

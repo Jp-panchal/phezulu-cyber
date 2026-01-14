@@ -22,7 +22,10 @@ const PartnerManager: React.FC = () => {
 
   const fetchPartners = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/admin/partners');
+      const token = localStorage.getItem('token');
+      const res = await fetch('http://localhost:5000/api/admin/partners', {
+        headers: { 'x-auth-token': token || '' }
+      });
       const data = await res.json();
       setPartners(data);
     } catch (err) {
