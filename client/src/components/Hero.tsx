@@ -44,12 +44,16 @@ const Hero: React.FC = () => {
             </span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-heading font-bold text-slate-200 leading-tight mb-6">
-            Resilient Cybersecurity for a <span className="text-transparent bg-clip-text bg-gradient-to-r from-crimson to-crimsonLight">Complex World</span>.
+          <h1 className="text-4xl md:text-6xl font-heading font-bold text-slate-200 leading-tight mb-3">
+            Building Resilient Digital Infrastructures:
           </h1>
 
-          <p className="text-lg text-slate-400 mb-8 max-w-xl leading-relaxed">
-            Phezulu Cyber combines advanced threat intelligence with strategic consultancy to protect your enterprise assets. We don't just patch vulnerabilities; we architect resilience.
+          <p className="text-xl md:text-2xl mb-8 font-medium">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-crimson to-crimsonLight">Cybersecurity, Cloud, and AI Solutions for a Secure Future</span>
+          </p>
+
+          <p className="text-base text-slate-400 mb-8 max-w-2xl leading-relaxed">
+            We combines cutting-edge cybersecurity, cloud expertise, and AI-driven solutions to protect your digital infrastructure. We don't just secure your systems; we architect resilience through innovative technologies and strategic guidance.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">

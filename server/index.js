@@ -17,6 +17,19 @@ const photoRoutes = require('./routes/photoRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const requiredEnv = [
+  'AZURE_SQL_SERVER',
+  'AZURE_SQL_DATABASE',
+  'AZURE_SQL_USER',
+  'AZURE_SQL_PASSWORD',
+  'AZURE_SQL_PORT'
+];
+
+const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+if (missingEnv.length > 0) {
+  console.warn(`Missing database environment variables: ${missingEnv.join(', ')}`);
+}
+
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '50mb' })); // Keep limit for flexibility

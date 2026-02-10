@@ -7,6 +7,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useContact } from '../lib/ContactContext';
 import { FALLBACK_PILLARS } from '../lib/api';
 import { slugify } from '../lib/slug';
+import LogoDark from '../assets/Logo-dark.svg';
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -186,40 +187,15 @@ const Navbar: React.FC = () => {
           className="flex items-center gap-3 cursor-pointer group"
           onClick={handleLogoClick}
         >
-          {/* Custom SVG Logo based on Image */}
+          {/* Logo Dark SVG */}
           <div className="relative w-11 h-11">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-md">
-              <defs>
-                <linearGradient id="ringGradient" x1="0" y1="0" x2="100" y2="100">
-                  <stop offset="0%" stopColor="#94a3b8" />
-                  <stop offset="50%" stopColor="#334155" />
-                  <stop offset="100%" stopColor="#94a3b8" />
-                </linearGradient>
-              </defs>
-
-              {/* Outer Ring */}
-              <circle cx="50" cy="50" r="42" stroke="url(#ringGradient)" strokeWidth="8" className="group-hover:opacity-90 transition-opacity" />
-
-              {/* The Red P */}
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M38 28H58C68 28 74 34 74 42C74 50 68 56 58 56H48V72H38V28ZM48 36V48H58C62 48 64 46 64 42C64 38 62 36 58 36H48Z"
-                fill="#D90429"
-                className="group-hover:fill-red-500 transition-colors"
-              />
-            </svg>
+            <img src={LogoDark} alt="Phezulu Logo" className="w-full h-full object-contain transition-transform group-hover:scale-105" />
           </div>
 
           <div className="flex flex-col justify-center">
-            <div className="flex items-center tracking-tighter leading-none -ml-1">
-              <span className="text-2xl font-heading font-extrabold text-slate-200">
-                PHEZUL
-              </span>
-              <span className="text-2xl font-heading font-extrabold text-crimson">
-                U
-              </span>
-            </div>
+            <span className="text-lg font-heading font-extrabold text-slate-200 tracking-tight">
+              Phezulu Global Technology
+            </span>
           </div>
         </div>
 

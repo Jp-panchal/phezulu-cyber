@@ -228,7 +228,7 @@ const ServiceDeepDive: React.FC<ServiceDeepDiveProps> = ({
               {benefits.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-3 text-sm text-slate-300">
                   <ArrowRight className="text-crimson mt-0.5 shrink-0" size={14} />
-                  {item}
+                  {typeof item === 'string' ? item : item.title}
                 </li>
               ))}
             </ul>
@@ -394,10 +394,10 @@ const Services: React.FC = () => {
         <div className="mb-12 flex flex-col lg:flex-row gap-8 justify-between items-end">
           <div>
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-4">
-              Pillars of <span className="text-crimson">Defense</span>
+              Our Core Pillars of <span className="text-crimson">Defense:</span>
             </h2>
             <p className="text-slate-400 max-w-2xl text-lg">
-              A holistic approach covering every vector. Search our catalog or select a pillar.
+              Securing Every Layer of Your Digital Transformation Comprehensive Cybersecurity, Cloud, and AI Solutions for End-to-End Protection.
             </p>
           </div>
 
@@ -510,7 +510,7 @@ const Services: React.FC = () => {
                     </div>
                     <h3 className="text-2xl font-heading font-bold text-white mb-2">{pillar.title}</h3>
                     <p className="text-sm font-mono text-crimsonLight mb-4 uppercase tracking-wider">{pillar.subtitle}</p>
-                    <p className="text-slate-400 mb-8 leading-relaxed line-clamp-4 flex-1">{pillar.description}</p>
+                    <p className="text-slate-400 mb-8 leading-relaxed flex-1">{pillar.description}</p>
                     <div className="flex items-center text-sm font-bold text-white group-hover:text-crimson transition-colors pt-6 border-t border-slate-800/50 group-hover:border-slate-700/50">
                       View Service Catalog <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
                     </div>
@@ -579,7 +579,7 @@ const Services: React.FC = () => {
                         <h3 className="text-3xl md:text-5xl font-heading font-bold text-white mb-4">
                           {selectedPillar.subtitle}
                         </h3>
-                        <p className="text-lg text-slate-300 leading-relaxed max-w-3xl line-clamp-2">
+                        <p className="text-lg text-slate-300 leading-relaxed max-w-3xl">
                           {selectedPillar.description}
                         </p>
                       </div>
