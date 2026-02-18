@@ -17,21 +17,36 @@ const photoRoutes = require('./routes/photoRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const requiredEnv = [
-  'AZURE_SQL_SERVER',
-  'AZURE_SQL_DATABASE',
-  'AZURE_SQL_USER',
-  'AZURE_SQL_PASSWORD',
-  'AZURE_SQL_PORT'
-];
-
-const missingEnv = requiredEnv.filter((key) => !process.env[key]);
-if (missingEnv.length > 0) {
-  console.warn(`Missing database environment variables: ${missingEnv.join(', ')}`);
+// Database environment validation
+if (!process.env.DB_HOST || !process.env.DB_NAME || !process.env.DB_USER) {
+  console.warn('Incomplete MySQL configuration. Please set DB_HOST, DB_NAME, DB_USER environment variables.');
 }
 
+// CORS Configuration for Hostinger Subdomain Architecture
+// Frontend: domain.com (static files in public_html)
+// Backend: api.domain.com (Node.js on subdomain)
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allowed origins - add your frontend domain here when deployed to Hostinger
+    const allowedOrigins = [
+      'http://localhost:5173',  // Local development (Vite)
+      'http://localhost:3000',  // Alternative local dev port
+      process.env.FRONTEND_URL  // Production frontend URL (e.g., https://yourdomain.com)
+    ].filter(Boolean);
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '50mb' })); // Keep limit for flexibility
 
 // Serve uploaded files statically
@@ -49,11 +64,10 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/photos', photoRoutes);
 
 // Database Connection
-// Connect to Azure SQL
 const connectDatabase = async () => {
   try {
     await sequelize.authenticate();
-    console.log('Azure SQL Database Connected');
+    console.log('MySQL Database Connected');
     
     // Sync all models (creates tables if they don't exist)
     await sequelize.sync({ alter: false }); // Use { alter: true } in dev to auto-update schema

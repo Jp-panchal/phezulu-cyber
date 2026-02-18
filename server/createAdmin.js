@@ -3,25 +3,19 @@ const User = require('./models/User');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
-const requiredEnv = [
-  'AZURE_SQL_SERVER',
-  'AZURE_SQL_DATABASE',
-  'AZURE_SQL_USER',
-  'AZURE_SQL_PASSWORD',
-  'AZURE_SQL_PORT'
-];
+const requiredEnv = ['DB_HOST', 'DB_NAME', 'DB_USER', 'JWT_SECRET'];
 
 const createAdmin = async () => {
   try {
     const missingEnv = requiredEnv.filter((key) => !process.env[key]);
     if (missingEnv.length > 0) {
-      console.error(`Missing database environment variables: ${missingEnv.join(', ')}`);
+      console.error(`Missing environment variables: ${missingEnv.join(', ')}`);
       process.exit(1);
     }
 
     // Connect to database
     await sequelize.authenticate();
-    console.log('Connected to Azure SQL Database');
+    console.log('Connected to MySQL Database');
 
     // Sync tables
     await sequelize.sync();

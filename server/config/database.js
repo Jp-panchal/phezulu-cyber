@@ -1,20 +1,15 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
+// MySQL Database Configuration for Hostinger
 const sequelize = new Sequelize(
-  process.env.AZURE_SQL_DATABASE,
-  process.env.AZURE_SQL_USER,
-  process.env.AZURE_SQL_PASSWORD,
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD || '',
   {
-    host: process.env.AZURE_SQL_SERVER,
-    port: Number(process.env.AZURE_SQL_PORT) || 1433,
-    dialect: 'mssql',
-    dialectOptions: {
-      options: {
-        encrypt: true,
-        enableArithAbort: true
-      }
-    },
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT) || 3306,
+    dialect: 'mysql',
     pool: {
       max: 5,
       min: 0,
@@ -24,4 +19,5 @@ const sequelize = new Sequelize(
     logging: false // set true if you want SQL logs
   }
 );
+
 module.exports = sequelize;
