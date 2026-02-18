@@ -7,22 +7,25 @@ const Contact = require('../models/Contact');
 // @access  Public
 router.post('/', async (req, res) => {
   try {
-    const { name, email, company, message } = req.body;
+    const { name, email, company, country, service, message, phone_country_code, phone } = req.body;
 
     // Basic validation
-    if (!name || !email || !message) {
+    if (!name || !email || !company || !country || !service || !message) {
       return res.status(400).json({ msg: 'Please enter all required fields' });
     }
 
-    const newContact = new Contact({
+    const contact = await Contact.create({
       name,
       email,
       company,
-      message
+      country,
+      service,
+      message,
+      phone_country_code,
+      phone
     });
-
-    const savedContact = await newContact.save();
-    res.status(201).json(savedContact);
+    
+    res.status(201).json(contact);
   } catch (err) {
     console.error('Contact submission error:', err.message);
     res.status(500).send('Server Error');

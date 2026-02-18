@@ -1,35 +1,50 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const sequelize = require('./config/database');
 const User = require('./models/User');
+const bcrypt = require('bcryptjs');
+require('dotenv').config();
+
+const requiredEnv = ['DB_HOST', 'DB_NAME', 'DB_USER', 'JWT_SECRET'];
 
 const createAdmin = async () => {
   try {
-    const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/phezulu';
-    
-    await mongoose.connect(MONGO_URI);
-    console.log('MongoDB Connected');
-
-    const username = 'admin';
-    const password = 'password123'; // CHANGE THIS PASSWORD
-
-    let user = await User.findOne({ username });
-    if (user) {
-      console.log('Admin user already exists');
-      process.exit();
+    const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+    if (missingEnv.length > 0) {
+      console.error(`Missing environment variables: ${missingEnv.join(', ')}`);
+      process.exit(1);
     }
 
-    user = new User({ username, password });
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
+    // Connect to database
+    await sequelize.authenticate();
+    console.log('Connected to MySQL Database');
 
-    await user.save();
-    console.log('Admin user created successfully');
-    console.log(`Username: ${username}`);
-    console.log(`Password: ${password}`);
-    process.exit();
+    // Sync tables
+    await sequelize.sync();
+    console.log('Tables synchronized');
+
+    // Check if admin already exists
+    const existingAdmin = await User.findOne({ where: { username: 'admin' } });
+    if (existingAdmin) {
+      console.log('Admin user already exists!');
+      process.exit(0);
+    }
+
+    // Create admin user
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash('admin123', salt);
+
+    const admin = await User.create({
+      username: 'admin',
+      password: hashedPassword
+    });
+
+    console.log(' Admin user created successfully!');
+    console.log('Username: admin');
+    console.log('Password: admin123');
+    console.log('\n IMPORTANT: Change this password in production!');
+
+    process.exit(0);
   } catch (err) {
-    console.error(err);
+    console.error('Error creating admin:', err.message);
     process.exit(1);
   }
 };

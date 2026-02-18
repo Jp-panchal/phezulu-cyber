@@ -9,25 +9,65 @@ const seedData = require('../data/insights');
 // @access  Public
 router.get('/', async (req, res) => {
   try {
-    let insights = await Insight.find();
+    let insights = await Insight.findAll({ order: [['created_at', 'DESC']] });
     
-    // Check if any insight is missing an ID or CONTENT (indicates legacy data)
-    const hasInvalidData = insights.some(i => !i.id || !i.content || i.content.length === 0);
-    
-    // If empty or has bad data, re-seed
-    if (insights.length === 0 || hasInvalidData) {
-      if (hasInvalidData) {
-         console.log('Detected legacy data (missing ID or Content). Clearing insights collection...');
-         await Insight.deleteMany({}); // Clear bad data
-      }
+    // If empty, seed with fallback data
+    if (insights.length === 0) {
       console.log('Seeding insights...');
-      insights = await Insight.insertMany(seedData);
+      // Prepare seed data with slug field
+      const preparedData = seedData.map(item => ({
+        slug: item.id, // Use id as slug
+        title: item.title,
+        category: item.category,
+        date: item.date,
+        excerpt: item.excerpt,
+        content: item.content || [item.excerpt],
+        image: item.image || '',
+        link: item.link || '#',
+        is_featured: item.isFeatured || false
+      }));
+      
+      insights = await Insight.bulkCreate(preparedData);
     }
     
-    res.json(insights);
+    // Format response: map slug to id for frontend
+    const formatted = insights.map(i => ({
+      ...i.toJSON(),
+      id: i.slug,
+      _id: i.id,
+      isFeatured: i.is_featured
+    }));
+    
+    res.json(formatted);
   } catch (err) {
     console.error(err.message);
     res.json(seedData); // Fallback
+  }
+});
+
+// @route   GET api/insights/:slug
+// @desc    Get single insight by slug
+// @access  Public
+router.get('/:slug', async (req, res) => {
+  try {
+    const insight = await Insight.findOne({ where: { slug: req.params.slug } });
+    
+    if (!insight) {
+      return res.status(404).json({ msg: 'Insight not found' });
+    }
+    
+    // Format response
+    const formatted = {
+      ...insight.toJSON(),
+      id: insight.slug,
+      _id: insight.id,
+      isFeatured: insight.is_featured
+    };
+    
+    res.json(formatted);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
   }
 });
 

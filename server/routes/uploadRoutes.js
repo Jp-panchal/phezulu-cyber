@@ -6,8 +6,8 @@ const fs = require('fs');
 
 // Ensure uploads directory exists
 const uploadDir = 'uploads';
-if (!fs.existsSync(uploadDir)){
-    fs.mkdirSync(uploadDir);
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
 }
 
 const storage = multer.diskStorage({
@@ -20,11 +20,11 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   limits: { fileSize: 10000000 }, // 10MB limit
   fileFilter: function (req, file, cb) {
-    const filetypes = /jpeg|jpg|png|gif|webp/;
+    const filetypes = /jpeg|jpg|png|gif|webp|svg/;
     const mimetype = filetypes.test(file.mimetype);
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
 
@@ -39,7 +39,7 @@ const upload = multer({
 // @desc    Upload an image
 // @access  Public (Protected by implementation in frontend)
 router.post('/', upload.single('image'), (req, res) => {
-  if(req.file) {
+  if (req.file) {
     // Return the URL to access the file
     // Assumes server serves 'uploads' statically
     const protocol = req.protocol;

@@ -3,9 +3,9 @@ const pillars = [
   {
     title: "Cybersecurity Services",
     subtitle: "Proactive Vulnerability Discovery & Defense",
-    description: "Comprehensive security solutions ranging from managed operations (SOC/MDR) to strategic governance and specialized assessments.",
+    description: "Advanced Cybersecurity Solutions to Safeguard Your Digital Infrastructure From managed detection and response (SOC/MDR) to threat assessment, we ensure proactive protection, compliance, and resilience against evolving threats.",
     color: "from-red-600/20 to-orange-500/5",
-    iconName: "ShieldAlert",
+    iconName: "Shield",
     services: [
       "SOC-as-a-service", "EDR-as-a-service", "MDR-as-a-service", "XDR-as-a-service", 
       "MFA-as-a-service", "MDM-as-a-service", "Vulnerability Assessment", "Dark Web Monitoring",
@@ -218,9 +218,9 @@ const pillars = [
   {
     title: "Cloud Services",
     subtitle: "Innovation & Scalability",
-    description: "End-to-end cloud solutions including consulting, development, migration, optimization, and infrastructure management.",
+    description: "Scalable Cloud Solutions for Seamless Digital Transformation. Full-stack services from cloud architecture design, migration, and optimization to ongoing cloud operations management, ensuring flexibility, security, and cost-efficiency.",
     color: "from-amber/20 to-yellow-500/5",
-    iconName: "FileCheck",
+    iconName: "Server",
     services: ["Cloud Consulting", "Application Development", "Cloud Migration", "Cloud Optimization", "Infrastructure Service"],
     details: [
       {
@@ -304,7 +304,7 @@ const pillars = [
   {
     title: "AI + Data Services",
     subtitle: "Unlock Value, Securely",
-    description: "Build and deploy quality AI agent systems. Securely connect your data with any AI model to create accurate, domain-specific applications.",
+    description: "Unlock the Power of AI and Data for Smarter Business Decisions. Develop and integrate AI agents, leveraging data-driven insights to build precise, domain-specific applications for automation, security, and efficiency",
     color: "from-crimson/20 to-rose-500/5",
     iconName: "Server",
     services: ["AI Consulting", "AI Development", "Agent System"],

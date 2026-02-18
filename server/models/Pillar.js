@@ -1,45 +1,63 @@
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const mongoose = require('mongoose');
-
-const ServiceDetailSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  description: { type: String, required: true },
-  fullDescription: [{ type: String }], // Array of strings for paragraphs
-  features: [{ type: String }],        // Array of bullet points
-  benefits: [{ type: String }],        // Array of bullet points
-  diagramUrl: { type: String }         // URL for specific service diagram/image
-});
-
-const PillarSchema = new mongoose.Schema({
+const Pillar = sequelize.define('Pillar', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
   title: {
-    type: String,
-    required: true
+    type: DataTypes.STRING(255),
+    allowNull: false,
+    unique: true
   },
   subtitle: {
-    type: String,
-    required: true
+    type: DataTypes.STRING(500),
+    allowNull: false
   },
   description: {
-    type: String,
-    required: true
+    type: DataTypes.TEXT,
+    allowNull: false
   },
   color: {
-    type: String,
-    required: true,
-    default: "from-crimson/20 to-rose-500/5"
+    type: DataTypes.STRING(255),
+    allowNull: false,
+    defaultValue: 'from-crimson/20 to-rose-500/5'
   },
-  iconName: {
-    type: String,
-    required: true
+  icon_name: {
+    type: DataTypes.STRING(100),
+    allowNull: false
   },
-  services: [{
-    type: String
-  }],
-  details: [ServiceDetailSchema],
-  createdAt: {
-    type: Date,
-    default: Date.now
+  services: {
+    type: DataTypes.TEXT, // Store JSON array as string
+    allowNull: false,
+    defaultValue: '[]',
+    get() {
+      const rawValue = this.getDataValue('services');
+      return rawValue ? JSON.parse(rawValue) : [];
+    },
+    set(value) {
+      this.setDataValue('services', JSON.stringify(value));
+    }
+  },
+  details: {
+    type: DataTypes.TEXT, // Store JSON array as string
+    allowNull: false,
+    defaultValue: '[]',
+    get() {
+      const rawValue = this.getDataValue('details');
+      return rawValue ? JSON.parse(rawValue) : [];
+    },
+    set(value) {
+      this.setDataValue('details', JSON.stringify(value));
+    }
   }
+}, {
+  tableName: 'pillars',
+  timestamps: true,
+  createdAt: 'created_at',
+  updatedAt: 'updated_at'
 });
 
-module.exports = mongoose.model('Pillar', PillarSchema);
+module.exports = Pillar;
